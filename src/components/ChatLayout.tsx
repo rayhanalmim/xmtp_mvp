@@ -10,9 +10,9 @@ import NewConversation from './NewConversation';
 const ChatLayout = () => {
     const { client, isConnected: isClientConnected, initClient } = useXMTP();
     const { signer, isConnected: isWalletConnected } = useWallet();
-    const [selectedConversation, setSelectedConversation] = useState(null);
-    const [isInitializing, setIsInitializing] = useState(false);
-    const [error, setError] = useState(null);
+    const [selectedConversation, setSelectedConversation] = useState<any>(null);
+    const [isInitializing, setIsInitializing] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
     // Initialize XMTP client when wallet is connected
     useEffect(() => {
@@ -36,12 +36,12 @@ const ChatLayout = () => {
     }, [signer, isWalletConnected, client, initClient, isInitializing]);
 
     // Handle conversation selection
-    const handleSelectConversation = (conversation) => {
+    const handleSelectConversation = (conversation: any) => {
         setSelectedConversation(conversation);
     };
 
     // Handle new conversation started
-    const handleConversationStarted = (conversation) => {
+    const handleConversationStarted = (conversation: any) => {
         setSelectedConversation(conversation);
     };
 
@@ -79,7 +79,7 @@ const ChatLayout = () => {
                     {!isInitializing && (
                         <div className="flex justify-center">
                             <button
-                                onClick={() => initClient(signer)}
+                                onClick={() => initClient(signer!)}
                                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
                                 Initialize XMTP
@@ -110,29 +110,31 @@ const ChatLayout = () => {
 
     // Render chat UI
     return (
-        <div className="min-h-screen flex flex-col">
-            <header className="bg-white shadow-sm">
+        <div className="h-screen flex flex-col bg-gray-900 text-white">
+            <header className="bg-gray-800 shadow-sm z-10 border-b border-gray-700">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                    <h1 className="text-xl font-semibold text-gray-900">XMTP Chat</h1>
+                    <h1 className="text-xl font-semibold">XMTP Chat</h1>
                     <WalletButton />
                 </div>
             </header>
 
-            <main className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex min-h-0">
                 {/* Sidebar */}
-                <div className="w-80 border-r flex flex-col">
+                <div className="w-80 bg-gray-800 border-r border-gray-700 flex flex-col">
                     <NewConversation onConversationStarted={handleConversationStarted} />
-                    <ConversationsList
-                        onSelectConversation={handleSelectConversation}
-                        selectedConversationId={selectedConversation?.topic}
-                    />
+                    <div className="flex-1 overflow-y-auto">
+                        <ConversationsList
+                            onSelectConversation={handleSelectConversation}
+                            selectedConversationId={selectedConversation?.topic}
+                        />
+                    </div>
                 </div>
 
                 {/* Main content */}
-                <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex-1 flex">
                     <ConversationMessages conversation={selectedConversation} />
                 </div>
-            </main>
+            </div>
         </div>
     );
 };
