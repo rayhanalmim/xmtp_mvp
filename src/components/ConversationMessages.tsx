@@ -10,7 +10,7 @@ interface ConversationMessagesProps {
 }
 
 const ConversationMessages: React.FC<ConversationMessagesProps> = ({ conversation }) => {
-    const { sendMessage } = useXMTP();
+    const { sendMessage, client } = useXMTP();
     const { address } = useWallet();
     const [messages, setMessages] = useState<DecodedMessage[]>([]);
     const [newMessage, setNewMessage] = useState('');
@@ -97,16 +97,16 @@ const ConversationMessages: React.FC<ConversationMessagesProps> = ({ conversatio
 
     if (!conversation) {
         return (
-            <div className="flex-1 flex justify-center items-center p-4 bg-gray-50">
-                <p className="text-gray-500">Select a conversation or start a new one</p>
+            <div className="flex-1 flex justify-center items-center p-4 bg-gray-900">
+                <p className="text-gray-400">Select a conversation or start a new one</p>
             </div>
         );
     }
 
     if (loading) {
         return (
-            <div className="flex-1 flex justify-center items-center p-4">
-                <p className="text-gray-500">Loading messages...</p>
+            <div className="flex-1 flex justify-center items-center p-4 bg-gray-900">
+                <p className="text-gray-400">Loading messages...</p>
             </div>
         );
     }
@@ -118,32 +118,38 @@ const ConversationMessages: React.FC<ConversationMessagesProps> = ({ conversatio
     const conversationLabel = (conversation as any).peerAddress || (conversation as any).topic || "Conversation";
 
     return (
-        <div className="flex-1 flex flex-col">
-            <div className="p-4 border-b">
+        <div className="flex-1 flex flex-col h-full bg-gray-900 text-white">
+            <div className="p-4 border-b border-gray-700">
                 <h2 className="text-lg font-medium">
                     {conversationLabel.substring(0, 6)}...
                     {conversationLabel.substring(conversationLabel.length - 4)}
                 </h2>
             </div>
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 ? (
                     <div className="flex justify-center items-center h-full">
-                        <p className="text-gray-500">No messages yet</p>
+                        <p className="text-gray-400">No messages yet</p>
                     </div>
                 ) : (
-                    <div className="space-y-4">
+                    <>
                         {messages.map((message) => {
-                            const isSender = (message as any).senderAddress === address;
+                            const isSender = (message as any).senderInboxId === client?.inboxId;
                             return (
                                 <div
                                     key={(message as any).id}
-                                    className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}
+                                    className={`flex ${isSender ? 'justify-start' : 'justify-end'}`}
                                 >
                                     <div
-                                        className={`max-w-[70%] rounded-lg p-3 ${isSender ? 'bg-blue-500 text-white' : 'bg-gray-100'}`}
+                                        className={`max-w-[70%] rounded-lg p-3 ${isSender
+                                            ? 'bg-gray-700 text-gray-200'
+                                            : 'bg-blue-600 text-white'
+                                            }`}
                                     >
                                         <p className="text-sm">{renderMessageContent(message)}</p>
-                                        <p className={`text-xs mt-1 ${isSender ? 'text-blue-100' : 'text-gray-500'}`}>
+                                        <p
+                                            className={`text-xs mt-1 ${isSender ? 'text-gray-400' : 'text-blue-200'
+                                                }`}
+                                        >
                                             {formatTime((message as any).sent)}
                                         </p>
                                     </div>
@@ -151,22 +157,22 @@ const ConversationMessages: React.FC<ConversationMessagesProps> = ({ conversatio
                             );
                         })}
                         <div ref={messagesEndRef} />
-                    </div>
+                    </>
                 )}
             </div>
-            <div className="border-t p-4">
+            <div className="border-t border-gray-700 p-4">
                 <form onSubmit={handleSendMessage} className="flex space-x-2">
                     <input
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type a message..."
-                        className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 bg-gray-800 border border-gray-600 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
                     />
                     <button
                         type="submit"
                         disabled={!newMessage.trim()}
-                        className="bg-blue-500 text-white rounded-full px-4 py-2 font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300"
+                        className="bg-blue-600 text-white rounded-full px-4 py-2 font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-600"
                     >
                         Send
                     </button>

@@ -30,7 +30,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({ onSelectConversat
         return (
             <div className="flex-1 overflow-y-auto p-4">
                 <div className="flex justify-center items-center h-full">
-                    <div className="text-gray-500">Loading conversations...</div>
+                    <div className="text-gray-400">Loading conversations...</div>
                 </div>
             </div>
         );
@@ -48,11 +48,11 @@ const ConversationsList: React.FC<ConversationsListProps> = ({ onSelectConversat
         return (
             <li
                 key={key}
-                className={`hover:bg-gray-50 cursor-pointer ${isSelected ? 'bg-blue-50' : ''}`}
+                className={`hover:bg-gray-700 cursor-pointer ${isSelected ? 'bg-blue-900' : ''}`}
                 onClick={() => !isRequest && onSelectConversation(conversation)}
             >
                 <div className="px-4 py-3 flex justify-between items-center">
-                    <p className="font-medium truncate">
+                    <p className="font-medium truncate text-gray-200">
                         {displayAddress.substring(0, 6)}...{displayAddress.substring(displayAddress.length - 4)}
                     </p>
                     {isRequest && (
@@ -61,7 +61,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({ onSelectConversat
                                 e.stopPropagation();
                                 allowConversation(conversation);
                             }}
-                            className="bg-blue-500 text-white px-2 py-1 rounded text-xs"
+                            className="bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700"
                         >
                             Allow
                         </button>
@@ -76,7 +76,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({ onSelectConversat
         return (
             <div className="flex-1 overflow-y-auto p-4">
                 <div className="flex justify-center items-center h-full">
-                    <div className="text-gray-500">No conversations yet</div>
+                    <div className="text-gray-400">No conversations yet</div>
                 </div>
             </div>
         );
@@ -87,14 +87,14 @@ const ConversationsList: React.FC<ConversationsListProps> = ({ onSelectConversat
         <div className="flex-1 overflow-y-auto">
             {conversationRequests.length > 0 && (
                 <div>
-                    <h2 className="p-4 text-sm font-semibold text-gray-500">Requests</h2>
-                    <ul className="divide-y divide-gray-200">
+                    <h2 className="p-4 text-sm font-semibold text-gray-400">Requests</h2>
+                    <ul className="divide-y divide-gray-700">
                         {conversationRequests.map((conv) => renderConversation(conv, true))}
                     </ul>
                 </div>
             )}
-            <h2 className="p-4 text-sm font-semibold text-gray-500">Conversations</h2>
-            <ul className="divide-y divide-gray-200">
+            <h2 className="p-4 text-sm font-semibold text-gray-400">Conversations</h2>
+            <ul className="divide-y divide-gray-700">
                 {conversations.map((conv) => renderConversation(conv, false))}
             </ul>
         </div>
